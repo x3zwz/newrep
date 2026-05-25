@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التحويلات الهندسية والتماثل – الفصل 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Light Mode & Book Colors */
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --card: #ffffff;
+    --border: #cbd5e1;
+    --accent1: #0284c7; /* Book Blue - Original */
+    --accent2: #10b981; /* Book Green - Image */
+    --accent3: #f59e0b; /* Yellow Accent */
+    --text: #0f172a;
+    --text-soft: #334155;
+    --text-muted: #64748b;
+    --ch1: #0284c7; 
+    --ch2: #10b981;
+    --ch3: #8b5cf6;
+    
+    /* Box Shadows for a framed, paper-like feel */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  }
+  
+  * { margin:0; padding:0; box-sizing:border-box; }
+  
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    /* subtle grid background for math feel */
+    background-image: 
+      linear-gradient(rgba(203, 213, 225, 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(203, 213, 225, 0.3) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* ─── HIGHLIGHTING ─── */
+  mark.racy-highlight {
+    background: linear-gradient(120deg, #fde047 0%, #fef08a 100%);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 800;
+    color: #0f172a;
+    display: inline-block;
+    line-height: 1.5;
+    box-shadow: 0 2px 4px rgba(253, 224, 71, 0.4);
+    border: 1px solid #facc15;
+  }
+
+  /* ─── LANDING ─── */
+  #landing {
+    position:relative; z-index:1;
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 40px 20px;
+  }
+  .hero-badge {
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    border-radius: 50px;
+    padding: 6px 20px;
+    font-size: 14px;
+    color: var(--accent1);
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+  }
+  .hero-title {
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 900;
+    text-align: center;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--text-soft);
+    text-align: center;
+    margin-bottom: 60px;
+    font-weight: 500;
+  }
+  
+  .chapters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    width: 100%; max-width: 1000px;
+  }
+  .ch-card {
+    position: relative;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 36px 28px;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
+    border: 2px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+  .ch-card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height: 8px;
+    background: var(--c);
+  }
+  .ch-card:hover { 
+    transform: translateY(-8px); 
+    box-shadow: var(--shadow-lg);
+    border-color: var(--c);
+  }
+  .ch-card.ch1 { --c: var(--ch1); }
+  .ch-card.ch2 { --c: var(--ch2); }
+  .ch-card.ch3 { --c: var(--ch3); }
+  
+  .ch-number {
+    font-size: 13px; font-weight: 800; letter-spacing: 1px;
+    color: var(--c); margin-bottom: 16px;
+  }
+  .ch-icon {
+    font-size: 48px; margin-bottom: 16px; display:block;
+  }
+  .ch-title-ar {
+    font-size: 26px; font-weight: 900; margin-bottom: 6px;
+    color: var(--text);
+  }
+  .ch-title-en {
+    font-size: 14px; color: var(--text-muted); font-weight: 600;
+    margin-bottom: 14px; letter-spacing: 1px;
+  }
+  .ch-desc {
+    font-size: 15px; color: var(--text-soft); line-height: 1.8;
+    font-family: 'Tajawal', sans-serif;
+  }
+  .ch-meta {
+    display: flex; gap: 12px; margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .ch-tag {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 4px 12px; font-size: 12px; color: var(--text-muted);
+    font-weight: 600;
+  }
+  .ch-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 24px;
+    background: var(--c); color: #fff;
+    border: none; border-radius: 10px;
+    padding: 10px 22px; font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: 'Cairo', sans-serif;
+    transition: opacity .2s, transform .2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  .ch-btn:hover { opacity:.9; transform: scale(1.02); }
+
+  /* ─── LESSON VIEWER ─── */
+  #viewer {
+    display: none;
+    position: fixed; inset: 0; z-index: 100;
+    background: var(--bg);
+    flex-direction: column;
+  }
+  #viewer.active { display:flex; }
+
+  .viewer-top {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    position: relative; z-index: 10;
+  }
+  .back-btn {
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px; padding: 8px 18px;
+    font-size: 14px; cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    transition: background .2s;
+    display:flex; align-items:center; gap:6px;
+  }
+  .back-btn:hover { background: #e2e8f0; }
+  .viewer-title { font-size:18px; font-weight:800; flex:1; color: var(--cv); }
+  
+  .viewer-tabs { display:flex; gap:8px; }
+  .tab-btn {
+    padding: 8px 20px; border-radius:8px; font-size:14px;
+    font-family:'Cairo',sans-serif; cursor:pointer; border:2px solid transparent;
+    font-weight:700; transition: all .2s;
+    background: transparent; color: var(--text-muted);
+  }
+  .tab-btn.active {
+    background: #f8fafc; color: var(--cv); border-color: var(--border);
+  }
+  
+  .progress-bar-wrap { height:4px; background: #e2e8f0; position:relative; }
+  .progress-bar { height:100%; background: var(--cv); transition: width .4s; border-radius:2px; }
+
+  /* ─── SLIDES ─── */
+  .slides-wrap { flex:1; overflow:hidden; position:relative; }
+  .slides-scroll { height:100%; overflow-y:auto; scroll-behavior:smooth; padding-bottom: 80px; }
+  .slides-scroll::-webkit-scrollbar { width:8px; }
+  .slides-scroll::-webkit-scrollbar-track { background:transparent; }
+  .slides-scroll::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+
+  .slide {
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 20px;
+    min-height: calc(100vh - 120px);
+  }
+  .slide-inner {
+    max-width: 860px; width:100%;
+    background: var(--surface);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border);
+  }
+  
+  /* Objectives Box (أهداف الدرس) */
+  .objectives-box {
+    background: #f0fdf4;
+    border: 2px dashed #4ade80;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+  .objectives-box h4 {
+    color: #166534; font-weight: 800; margin-bottom: 10px; font-size: 18px;
+  }
+  .objectives-box ul {
+    list-style: none; padding-right: 10px;
+  }
+  .objectives-box li {
+    font-size: 16px; color: #15803d; margin-bottom: 6px; font-weight: 600;
+  }
+  .objectives-box li::before {
+    content: '🎯'; margin-left: 8px;
+  }
+
+  .slide-num {
+    font-size:12px; font-weight:800; letter-spacing:1px;
+    color: var(--cv); margin-bottom:16px;
+    text-transform: uppercase;
+  }
+  .slide h2 {
+    font-size: clamp(24px,4vw,34px); font-weight:900;
+    line-height:1.4; margin-bottom:20px; color:var(--text);
+  }
+  .slide h3 {
+    font-size:20px; font-weight:800; margin-bottom:16px;
+    color: var(--cv);
+  }
+  .slide p, .slide li {
+    font-size:17px; line-height:2; color:var(--text-soft);
+    font-family:'Tajawal',sans-serif;
+  }
+  .slide ul { list-style:none; padding:0; }
+  .slide ul li {
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+    display:flex; align-items:flex-start; gap:12px;
+  }
+  .slide ul li::before {
+    content:'◆'; color:var(--cv);
+    font-size:12px; margin-top:6px; flex-shrink:0;
+  }
+
+  /* Concept Box (مفهوم أساسي) */
+  .concept-box {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-right: 6px solid var(--cv);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 24px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .concept-box .label {
+    display: inline-block;
+    background: var(--cv); color: #fff;
+    padding: 4px 12px; border-radius: 20px;
+    font-size:12px; font-weight:800; 
+    margin-bottom:12px; letter-spacing: 1px;
+  }
+  .concept-box h4 { font-size:19px; font-weight:800; color:var(--text); margin-bottom:8px; }
+  
+  /* SVG/Graphic Container */
+  .svg-container {
+    width: 100%; max-width: 500px; margin: 20px auto;
+    background: #ffffff; border: 2px solid var(--border);
+    border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm);
+  }
+
+  .formula-grid {
+    display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap:16px; margin:24px 0;
+  }
+  .formula-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius:14px; padding:20px 22px;
+    text-align:center;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .formula-card:hover { border-color:var(--cv); transform:translateY(-4px); box-shadow: var(--shadow-md); }
+  .formula-card .deg {
+    font-size:24px; font-weight:900; color:var(--cv);
+    margin-bottom:8px;
+  }
+  .formula-card .rule {
+    font-family:monospace; direction:ltr;
+    font-size:18px; color:var(--text); font-weight:800;
+    margin-bottom:10px; background: #e2e8f0;
+    border-radius:8px; padding:8px 10px;
+  }
+  .formula-card .desc { font-size:14px; color:var(--text-muted); line-height: 1.6;}
+
+  /* EXAMPLE BOX */
+  .example-box {
+    background: #ffffff;
+    border: 2px solid var(--border);
+    border-radius:16px; padding:28px 32px; margin:24px 0;
+    position:relative; overflow:hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .example-box::before {
+    content:''; position:absolute; top:0; right:0;
+    width:120px; height:120px;
+    background: radial-gradient(circle, var(--cv), transparent 70%);
+    opacity:0.05;
+  }
+  .example-label {
+    display:inline-flex; align-items:center; gap:8px;
+    background: #f1f5f9; color:var(--cv); border: 1px solid var(--border);
+    border-radius:8px; padding:6px 14px;
+    font-size:13px; font-weight:800; letter-spacing:1px;
+    margin-bottom:16px;
+  }
+  .example-box h4 { font-size:18px; color:var(--text); margin-bottom:12px; font-weight:800; }
+  .steps-list { margin-top:14px; }
+  .step { display:flex; gap:14px; margin-bottom:14px; align-items:flex-start; }
+  .step-num {
+    min-width:28px; height:28px;
+    background: var(--cv); color:#fff;
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:800; flex-shrink:0;
+  }
+  .math-inline {
+    display:inline-block;
+    background: #f1f5f9; border:1px solid #e2e8f0;
+    border-radius:6px; padding:2px 10px;
+    font-family:monospace; font-size:15px;
+    color:var(--text); direction:ltr; font-weight: 700;
+  }
+  
+  .coord-table {
+    width:100%; border-collapse:collapse; margin:16px 0;
+    font-family:'Tajawal',sans-serif; background: #fff;
+  }
+  .coord-table th {
+    background: #f8fafc; padding:12px 16px; font-size:14px;
+    color: var(--text); border-bottom:2px solid var(--cv);
+    text-align:center; font-weight: 800;
+  }
+  .coord-table td {
+    padding:12px 16px; font-size:15px; color:var(--text-soft);
+    border-bottom:1px solid #e2e8f0; text-align:center; direction:ltr;
+    font-weight: 600;
+  }
+  .coord-table tr:hover td { background:#f1f5f9; }
+  
+  .arrow-map {
+    display:flex; align-items:center; gap:12px;
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius:10px; padding:16px 20px;
+    margin:12px 0; direction:ltr; font-family:monospace; font-weight: 700;
+  }
+  .arrow-map span { color:var(--text); font-size:18px; }
+  .arrow-map span.arrow { color:var(--cv); }
+
+  /* NAV DOTS */
+  .slide-nav { display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }
+  .slide-dot {
+    width:10px; height:10px; border-radius:50%; background: #cbd5e1;
+    transition: background .2s, width .2s; cursor:pointer;
+  }
+  .slide-dot.active { background: var(--cv); width:28px; border-radius:5px; }
+
+  /* ─── QUIZ ─── */
+  .quiz-wrap {
+    flex:1; overflow-y:auto; padding:40px; display:none; background: var(--bg);
+  }
+  .quiz-wrap.active { display:block; }
+  .quiz-wrap::-webkit-scrollbar { width:8px; }
+  .quiz-wrap::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+
+  .quiz-header {
+    max-width:760px; margin:0 auto 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .quiz-header h2 { font-size:24px; font-weight:900; color: var(--text);}
+  .quiz-score-badge {
+    background: #fff; border:2px solid var(--border);
+    border-radius:12px; padding:8px 20px;
+    font-size:16px; font-weight:800; color: var(--cv);
+    box-shadow: var(--shadow-sm);
+  }
+  .q-card {
+    max-width:760px; margin:0 auto 24px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius:20px; padding:32px;
+    transition: border-color .3s;
+    box-shadow: var(--shadow-sm);
+  }
+  .q-card.answered-correct { border-color:#10b981; }
+  .q-card.answered-wrong { border-color:#ef4444; }
+  .q-num {
+    font-size:12px; font-weight:800; letter-spacing:1px;
+    color: var(--cv); margin-bottom:12px;
+  }
+  .q-text {
+    font-size:19px; font-weight:800; color:var(--text);
+    line-height:1.6; margin-bottom:20px;
+    font-family:'Cairo',sans-serif;
+  }
+  .q-hint {
+    font-size:15px; color:var(--text-muted); font-family:'Tajawal',sans-serif;
+    background:#f8fafc; border: 1px solid #e2e8f0;
+    border-radius:8px; padding:12px 16px; margin-bottom:16px; font-weight: 600;
+  }
+  .options { display:flex; flex-direction:column; gap:12px; }
+  .opt {
+    display:flex; align-items:center; gap:14px;
+    background: #fff; border: 2px solid var(--border);
+    border-radius:12px; padding:16px;
+    cursor:pointer; transition: all .2s;
+    font-size:16px; color:var(--text-soft); font-weight: 600;
+    font-family:'Tajawal',sans-serif;
+  }
+  .opt:hover:not(.disabled) { border-color:var(--cv); background: #f8fafc; }
+  .opt.selected-correct { background: #d1fae5; border-color:#10b981; color:#065f46; }
+  .opt.selected-wrong { background: #fee2e2; border-color:#ef4444; color:#991b1b; }
+  .opt.show-correct { background: #ecfdf5; border-color:#34d399; }
+  .opt.disabled { cursor:default; }
+  
+  .opt-marker {
+    min-width:32px; height:32px;
+    border-radius:8px; border:2px solid var(--border); background: #f1f5f9;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:800; color:var(--text-muted);
+    transition: all .2s; flex-shrink:0;
+  }
+  .opt:hover:not(.disabled) .opt-marker { border-color:var(--cv); color:var(--cv); }
+  .opt.selected-correct .opt-marker { background:#10b981; border-color:#10b981; color:#fff; }
+  .opt.selected-wrong .opt-marker { background:#ef4444; border-color:#ef4444; color:#fff; }
+  .opt.show-correct .opt-marker { background:#34d399; border-color:#34d399; color:#fff; }
+  
+  .feedback-box {
+    margin-top:20px; padding:16px;
+    border-radius:12px; font-size:15px; font-weight:700;
+    font-family:'Tajawal',sans-serif; display:none;
+  }
+  .feedback-box.correct { background:#d1fae5; color:#065f46; border:1px solid #34d399; }
+  .feedback-box.wrong { background:#fee2e2; color:#991b1b; border:1px solid #f87171; }
+  
+  .quiz-complete {
+    max-width:500px; margin:60px auto; text-align:center;
+    background:var(--card); border:2px solid var(--border);
+    border-radius:24px; padding:48px 40px; box-shadow: var(--shadow-md);
+    display:none;
+  }
+  .quiz-complete.show { display:block; }
+  .complete-emoji { font-size:64px; margin-bottom:20px; }
+  .complete-title { font-size:28px; font-weight:900; margin-bottom:8px; color: var(--text);}
+  .complete-score {
+    font-size:48px; font-weight:900;
+    color:var(--cv); margin:20px 0;
+  }
+  .complete-msg { font-size:17px; color:var(--text-soft); font-family:'Tajawal',sans-serif; font-weight: 600;}
+  .retry-btn {
+    margin-top:28px;
+    background:var(--cv); color:#fff;
+    border:none; border-radius:12px; padding:12px 36px;
+    font-size:16px; font-weight:800; cursor:pointer;
+    font-family:'Cairo',sans-serif; transition:opacity .2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  .retry-btn:hover { opacity:.9; transform: scale(1.02); }
+
+  /* SUMMARY TABLE */
+  .summary-table {
+    width:100%; border-collapse:collapse; margin:24px 0;
+    font-family:'Tajawal',sans-serif; background: #fff;
+  }
+  .summary-table th {
+    background:#f8fafc; padding:14px 18px; font-size:15px;
+    color:var(--cv); border-bottom:2px solid var(--border);
+    text-align:right; font-weight: 800;
+  }
+  .summary-table td {
+    padding:14px 18px; font-size:15px; color:var(--text-soft);
+    border-bottom:1px solid #e2e8f0; text-align:right; font-weight: 600;
+  }
+  .summary-table td:last-child { direction:ltr; text-align:center; }
+  .summary-table tr:hover td { background:#f1f5f9; }
+  .tag-pill {
+    display:inline-block; padding:4px 14px; border-radius:20px;
+    font-size:13px; font-weight:800;
+  }
+  .tag-pill.blue { background:#e0f2fe; color:var(--ch1); border:1px solid #bae6fd; }
+  .tag-pill.green { background:#d1fae5; color:var(--ch2); border:1px solid #6ee7b7; }
+  .tag-pill.yellow { background:#fef3c7; color:var(--ch3); border:1px solid #fcd34d; }
+
+  @media(max-width:600px){
+    .slide { padding:20px 10px; }
+    .slide-inner { padding: 24px; }
+    .formula-grid { grid-template-columns:1fr; }
+    .viewer-tabs { display:none; }
+    .q-card { padding:24px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="landing">
+  <div class="hero-badge">📐 رياضيات — الفصل السابع</div>
+  <h1 class="hero-title">التحويلات الهندسية والتماثل</h1>
+  <p class="hero-sub">اختر درسًا لبدء التعلم التفاعلي</p>
+
+  <div class="chapters-grid">
+    <div class="ch-card ch1" onclick="openChapter(1)">
+      <div class="ch-number">الدرس 7-1</div>
+      <span class="ch-icon">🔀</span>
+      <div class="ch-title-ar">الانعكاس</div>
+      <div class="ch-title-en">Reflection</div>
+      <p class="ch-desc">تعلّم كيف يُقلب الشكل الهندسي حول محور الانعكاس، وقواعد الإحداثيات لكل نوع من المحاور.</p>
+      <div class="ch-meta">
+        <span class="ch-tag">7 شرائح</span>
+        <span class="ch-tag">8 أسئلة</span>
+      </div>
+      <button class="ch-btn" style="--c:var(--ch1)">ابدأ الدرس ←</button>
+    </div>
+
+    <div class="ch-card ch2" onclick="openChapter(2)">
+      <div class="ch-number">الدرس 7-2</div>
+      <span class="ch-icon">➡️</span>
+      <div class="ch-title-ar">الإزاحة</div>
+      <div class="ch-title-en">Translation</div>
+      <p class="ch-desc">اكتشف كيف ينتقل الشكل من موقع لآخر دون تدوير، واحسب إحداثيات الصورة الناتجة عن الإزاحة.</p>
+      <div class="ch-meta">
+        <span class="ch-tag">6 شرائح</span>
+        <span class="ch-tag">7 أسئلة</span>
+      </div>
+      <button class="ch-btn" style="--c:var(--ch2)">ابدأ الدرس ←</button>
+    </div>
+
+    <div class="ch-card ch3" onclick="openChapter(3)">
+      <div class="ch-number">الدرس 7-3</div>
+      <span class="ch-icon">🔄</span>
+      <div class="ch-title-ar">الدوران</div>
+      <div class="ch-title-en">Rotations</div>
+      <p class="ch-desc">استكشف كيف يدور الشكل حول نقطة ثابتة، وتعلّم رموز الدوران بزوايا 90° و180° و270°.</p>
+      <div class="ch-meta">
+        <span class="ch-tag">6 شرائح</span>
+        <span class="ch-tag">8 أسئلة</span>
+      </div>
+      <button class="ch-btn" style="--c:var(--ch3)">ابدأ الدرس ←</button>
+    </div>
+  </div>
+</div>
+
+<div id="viewer">
+  <div class="viewer-top">
+    <button class="back-btn" onclick="closeChapter()">← العودة</button>
+    <div class="viewer-title" id="viewer-title"></div>
+    <div class="viewer-tabs">
+      <button class="tab-btn active" id="tab-slides" onclick="switchTab('slides')">📖 الدرس</button>
+      <button class="tab-btn" id="tab-quiz" onclick="switchTab('quiz')">✏️ الاختبار</button>
+    </div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+  </div>
+
+  <div class="slides-wrap" id="slides-wrap">
+    <div class="slides-scroll" id="slides-scroll" onscroll="updateProgress()">
+      <div id="slides-content"></div>
+    </div>
+  </div>
+
+  <div class="quiz-wrap" id="quiz-wrap">
+    <div class="quiz-header">
+      <h2>✏️ اختبر نفسك</h2>
+      <div class="quiz-score-badge" id="score-badge">0 / 0</div>
+    </div>
+    <div id="quiz-content"></div>
+    <div class="quiz-complete" id="quiz-complete">
+      <div class="complete-emoji" id="complete-emoji">🌟</div>
+      <div class="complete-title">انتهيت من الاختبار!</div>
+      <div class="complete-score" id="complete-score"></div>
+      <div class="complete-msg" id="complete-msg"></div>
+      <button class="retry-btn" onclick="retryQuiz()">إعادة الاختبار 🔁</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// SVG HELPERS (Grid + Shapes)
+// ══════════════════════════════════════════════
+function getGridSVG(paths) {
+  return `
+    <div class="svg-container">
+      <svg viewBox="-50 -50 100 100" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
+        <defs>
+          <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arrowHead" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+            <polygon points="0 0, 6 3, 0 6" fill="#f59e0b" />
+          </marker>
+        </defs>
+        <rect x="-50" y="-50" width="100" height="100" fill="url(#grid)" />
+        <line x1="-50" y1="0" x2="50" y2="0" stroke="#94a3b8" stroke-width="1"/>
+        <line x1="0" y1="-50" x2="0" y2="50" stroke="#94a3b8" stroke-width="1"/>
+        ${paths}
+      </svg>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const CHAPTERS = {
+  1: {
+    color: 'var(--ch1)',
+    title: 'الانعكاس — Reflection',
+    slides: [
+      {
+        num:'الشريحة 1',
+        html:`
+          <div class="objectives-box">
+            <h4>أهداف الدرس</h4>
+            <ul>
+              <li>أرسم الصورة الناتجة عن الانعكاس.</li>
+              <li>أرسم الصورة الناتجة عن الانعكاس في المستوى الإحداثي.</li>
+            </ul>
+          </div>
+          <div class="slide-nav" id="nav-1"></div>
+          <div class="slide-num">مقدمة</div>
+          <h2>ما هو الانعكاس؟</h2>
+          <div class="concept-box">
+            <div class="label">مفهوم أساسي</div>
+            <h4>الانعكاس — Reflection</h4>
+            <p>الانعكاس هو تحويل هندسي <strong>يقلب</strong> الشكل حول مستقيم ثابت يُسمى <strong>محور الانعكاس</strong>، بحيث يكون بُعد كل نقطة عن المحور مساويًا لبُعد صورتها.</p>
+            ${getGridSVG(`
+              <line x1="0" y1="-50" x2="0" y2="50" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,4"/> <polygon points="-30,-10 -10,-10 -20,-30" fill="rgba(2, 132, 199, 0.2)" stroke="#0284c7" stroke-width="1.5"/>
+              <polygon points="30,-10 10,-10 20,-30" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="1.5"/>
+              <line x1="-20" y1="-30" x2="20" y2="-30" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2,2"/>
+            `)}
+          </div>
+          <ul>
+            <li>إذا كانت النقطة <em>واقعة</em> على محور الانعكاس، فإن صورتها هي <strong>النقطة نفسها</strong>.</li>
+            <li>إذا كانت النقطة <em>غير واقعة</em> على المحور، يكون محور الانعكاس هو <strong>المنصف العمودي</strong> للقطعة المستقيمة التي تصل بين النقطة وصورتها.</li>
+          </ul>
+          <div class="concept-box" style="margin-top:24px">
+            <div class="label">خصائص الانعكاس</div>
+            <p>الانعكاس تحويل تطابقي: يحافظ على الأبعاد وقياسات الزوايا وترتيب مواقع النقاط والاستقامة، لكنه <strong>يعكس الاتجاه</strong>.</p>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 2',
+        html:`
+          <div class="slide-num">قواعد الإحداثيات</div>
+          <h2>الانعكاس في المستوى الإحداثي</h2>
+          <p style="margin-bottom:24px">عند الانعكاس حول المحاور الرئيسية، توجد قواعد سهلة لإيجاد إحداثيات الصورة:</p>
+          
+          ${getGridSVG(`
+            <circle cx="20" cy="-20" r="2" fill="#0284c7"/>
+            <text x="23" y="-23" font-size="6" fill="#0284c7" font-family="sans-serif">A(x,y)</text>
+            <circle cx="20" cy="20" r="2" fill="#10b981"/>
+            <text x="23" y="26" font-size="6" fill="#10b981" font-family="sans-serif">A'(x,-y)</text>
+            <line x1="20" y1="-20" x2="20" y2="20" stroke="#10b981" stroke-dasharray="2,2" stroke-width="1"/>
+            <circle cx="-20" cy="-20" r="2" fill="#f59e0b"/>
+            <text x="-38" y="-23" font-size="6" fill="#f59e0b" font-family="sans-serif">A''(-x,y)</text>
+            <line x1="20" y1="-20" x2="-20" y2="-20" stroke="#f59e0b" stroke-dasharray="2,2" stroke-width="1"/>
+          `)}
+
+          <div class="formula-grid">
+            <div class="formula-card">
+              <div class="deg">المحور x</div>
+              <div class="rule">(x, y) → (x, -y)</div>
+              <div class="desc">اضرب الإحداثي y في −1</div>
+            </div>
+            <div class="formula-card">
+              <div class="deg">المحور y</div>
+              <div class="rule">(x, y) → (−x, y)</div>
+              <div class="desc">اضرب الإحداثي x في −1</div>
+            </div>
+            <div class="formula-card">
+              <div class="deg">y = x</div>
+              <div class="rule">(x, y) → (y, x)</div>
+              <div class="desc">بدّل موقعَي الإحداثيين x و y</div>
+            </div>
+          </div>
+          <div class="concept-box">
+            <div class="label">ملاحظة</div>
+            <p>النقاط الواقعة على محور الانعكاس تبقى <strong>ثابتة</strong>: مثلاً النقطة <span class="math-inline">B(2,0)</span> على المحور x، صورتها هي <span class="math-inline">B'(2,0)</span> نفسها.</p>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 3',
+        html:`
+          <div class="slide-num">مثال 1 — رسم صورة مضلع</div>
+          <h2>رسم صورة الانعكاس</h2>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 1</div>
+            <h4>رسم صورة مضلع بالانعكاس حول مستقيم معطى</h4>
+            <div class="steps-list">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-text">ارسم من كل رأس من رؤوس المضلع مستقيمًا يمرّ بالرأس ويكون عموديًا على المستقيم k باستعمال الفرجار.</div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-text">قِس المسافة بين النقطة الأصلية والمستقيم k. ضع النقطة المناظرة على الجانب الآخر على نفس المسافة.</div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-text">كرّر للرؤوس جميعها، ثم صِل الرؤوس الجديدة لتشكيل صورة المضلع.</div>
+              </div>
+            </div>
+          </div>
+          <div class="concept-box">
+            <div class="label">نتيجة</div>
+            <p>الشكل الأصلي △ABC ≅ △A'B'C' (تطابق تام). الانعكاس هو تحويل تطابق.</p>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 4',
+        html:`
+          <div class="slide-num">مثال 2 — الانعكاس حول المحور x أو y</div>
+          <h2>رسم صورة المضلع في المستوى الإحداثي</h2>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 3 — ق (أ)</div>
+            <h4>انعكاس △JKL حول المحور x = −4</h4>
+            <p>إحداثيات الرؤوس: <span class="math-inline">J(0,3)</span>، <span class="math-inline">K(−2,−1)</span>، <span class="math-inline">L(−6,1)</span></p>
+          </div>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 4 — الانعكاس حول المحور x</div>
+            <h4>△ABC: A(−5,3)، B(2,0)، C(1,2) — حول المحور x</h4>
+            <p>نطبق القاعدة: <span class="math-inline">(x, y) → (x, −y)</span></p>
+            <table class="coord-table">
+              <tr><th>النقطة الأصلية</th><th>→</th><th>الصورة</th></tr>
+              <tr><td>A(−5, 3)</td><td>→</td><td>A'(−5, −3)</td></tr>
+              <tr><td>B(2, 0)</td><td>→</td><td>B'(2, 0) ← ثابتة</td></tr>
+              <tr><td>C(1, 2)</td><td>→</td><td>C'(1, −2)</td></tr>
+            </table>
+          </div>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 4 — الانعكاس حول المحور y</div>
+            <h4>PQRS: P(−4,1)، Q(2,3)، R(2,−1)، S(−4,−3) — حول المحور y</h4>
+            <p>القاعدة: <span class="math-inline">(x, y) → (−x, y)</span></p>
+            <table class="coord-table">
+              <tr><th>الأصل</th><th>→</th><th>الصورة</th></tr>
+              <tr><td>P(−4, 1)</td><td>→</td><td>P'(4, 1)</td></tr>
+              <tr><td>Q(2, 3)</td><td>→</td><td>Q'(−2, 3)</td></tr>
+              <tr><td>R(2, −1)</td><td>→</td><td>R'(−2, −1)</td></tr>
+              <tr><td>S(−4, −3)</td><td>→</td><td>S'(4, −3)</td></tr>
+            </table>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 5',
+        html:`
+          <div class="slide-num">مثال 5 — الانعكاس حول y = x</div>
+          <h2>انعكاس حول المستقيم y = x</h2>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 5</div>
+            <h4>JKLM: J(2,2)، K(4,1)، L(3,−3)، M(0,−4) — حول y = x</h4>
+            <p>القاعدة: <span class="math-inline">(x, y) → (y, x)</span> — بدّل موقعَي الإحداثيين</p>
+            <table class="coord-table">
+              <tr><th>الأصل</th><th>→</th><th>الصورة</th></tr>
+              <tr><td>J(2, 2)</td><td>→</td><td>J'(2, 2) ← ثابتة</td></tr>
+              <tr><td>K(4, 1)</td><td>→</td><td>K'(1, 4)</td></tr>
+              <tr><td>L(3, −3)</td><td>→</td><td>L'(−3, 3)</td></tr>
+              <tr><td>M(0, −4)</td><td>→</td><td>M'(−4, 0)</td></tr>
+            </table>
+          </div>
+          <div class="concept-box">
+            <div class="label">ملخص كامل</div>
+            <table class="summary-table">
+              <tr><th>نوع الانعكاس</th><th>التحويل</th></tr>
+              <tr><td>حول المحور x</td><td><span class="math-inline">(x,y)→(x,−y)</span></td></tr>
+              <tr><td>حول المحور y</td><td><span class="math-inline">(x,y)→(−x,y)</span></td></tr>
+              <tr><td>حول y = x</td><td><span class="math-inline">(x,y)→(y,x)</span></td></tr>
+            </table>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 6',
+        html:`
+          <div class="slide-num">من واقع الحياة</div>
+          <h2>تطبيقات الانعكاس في الحياة</h2>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 2 — من واقع الحياة</div>
+            <h4>مسألة اختصار المسافات باستعمال الانعكاس</h4>
+            <p>أحمد يريد الوقوف عند المستقيم s، ثم الذهاب إلى المتجر B ثم G. أيُّ موقع P على s يجعل مجموع المسافة BP + PG أقل ما يمكن؟</p>
+            <div class="steps-list">
+              <div class="step">
+                <div class="step-num">✏️</div>
+                <div class="step-text">نجد صورة B بالانعكاس حول المستقيم s، لتصبح B'. نرسم المستقيم B'G. نقطة التقاطع مع المستقيم s هي P المطلوبة.</div>
+              </div>
+              <div class="step">
+                <div class="step-num">💡</div>
+                <div class="step-text">لأن BP = B'P، فإن BP + PG = B'P + PG وهذا يكون أقل ما يمكن عندما تكون النقاط B'، P، G على استقامة واحدة.</div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 7',
+        html:`
+          <div class="slide-num">مراجعة الدرس</div>
+          <h2>ملخص درس الانعكاس 🎯</h2>
+          <div class="formula-grid">
+            <div class="formula-card">
+              <div class="deg">المحور x</div>
+              <div class="rule">(x,y)→(x,−y)</div>
+              <div class="desc">اعكس إشارة y</div>
+            </div>
+            <div class="formula-card">
+              <div class="deg">المحور y</div>
+              <div class="rule">(x,y)→(−x,y)</div>
+              <div class="desc">اعكس إشارة x</div>
+            </div>
+            <div class="formula-card">
+              <div class="deg">المستقيم y = x</div>
+              <div class="rule">(x,y)→(y,x)</div>
+              <div class="desc">بدّل الإحداثيين</div>
+            </div>
+          </div>
+          <div class="concept-box">
+            <div class="label">تذكّر دائمًا</div>
+            <ul style="margin-top:8px">
+              <li>الانعكاس يحافظ على الأبعاد والزوايا</li>
+              <li>النقاط على المحور تبقى في مكانها</li>
+              <li>الشكل وصورته متطابقان (≅)</li>
+            </ul>
+          </div>
+          <p style="margin-top:24px; font-size:16px; font-weight:700;">انتهيت من الدرس! انتقل إلى <strong style="color:var(--cv)">الاختبار</strong> لاختبار فهمك 🚀</p>
+        `
+      }
+    ],
+    questions: [
+      {
+        type:'mcq',
+        q:'صورة النقطة A(4, −2) بالانعكاس حول المحور x هي:',
+        hint:'القاعدة: (x, y) → (x, −y) — اضرب y في −1',
+        opts:['A\'(−4, −2)','A\'(4, 2)','A\'(−4, 2)','A\'(2, 4)'],
+        ans:1, feedback:'صحيح! (4,−2)→(4,−(−2))=(4,2). نحافظ على x ونعكس y.'
+      },
+      {
+        type:'mcq',
+        q:'صورة النقطة B(−3, 5) بالانعكاس حول المحور y هي:',
+        hint:'القاعدة: (x, y) → (−x, y) — اضرب x في −1',
+        opts:['B\'(3, 5)','B\'(−3, −5)','B\'(5, −3)','B\'(3, −5)'],
+        ans:0, feedback:'صحيح! (−3,5)→(−(−3),5)=(3,5). نحافظ على y ونعكس x.',
+        svg: getGridSVG(`
+            <circle cx="-30" cy="-30" r="2" fill="#0284c7"/>
+            <text x="-27" y="-30" font-size="5" fill="#0284c7">B(-3,5)</text>
+            <circle cx="30" cy="-30" r="2" fill="#10b981"/>
+            <text x="33" y="-30" font-size="5" fill="#10b981">B'(3,5)</text>
+            <line x1="-30" y1="-30" x2="30" y2="-30" stroke="#10b981" stroke-dasharray="2,2"/>
+        `)
+      },
+      {
+        type:'mcq',
+        q:'صورة النقطة C(2, 7) بالانعكاس حول المستقيم y = x هي:',
+        hint:'القاعدة: (x, y) → (y, x) — بدّل الإحداثيين',
+        opts:['C\'(2, 7)','C\'(−2, −7)','C\'(7, 2)','C\'(−7, 2)'],
+        ans:2, feedback:'ممتاز! عند الانعكاس حول y=x نبدّل الإحداثيين: (2,7)→(7,2).'
+      },
+      {
+        type:'mcq',
+        q:'النقطة P(5, 0) تقع على المحور x. ما صورتها بالانعكاس حول المحور x؟',
+        hint:'النقاط الواقعة على محور الانعكاس تبقى ثابتة.',
+        opts:['P\'(0, 5)','P\'(−5, 0)','P\'(5, 0)','P\'(0, −5)'],
+        ans:2, feedback:'صحيح! النقطة P تقع على المحور x نفسه، فصورتها هي نفسها P\'(5,0).'
+      },
+      {
+        type:'mcq',
+        q:'△ABC إحداثياته: A(−5,3), B(2,0), C(1,2). ما إحداثيات C\' بعد انعكاسه حول المحور x؟',
+        hint:'طبّق القاعدة: (x, y) → (x, −y) على النقطة C(1, 2).',
+        opts:['C\'(1, 2)','C\'(−1, 2)','C\'(1, −2)','C\'(−1, −2)'],
+        ans:2, feedback:'صحيح! C(1,2) → C\'(1,−2). نحتفظ بـ x وتغير إشارة y.'
+      },
+      {
+        type:'mcq',
+        q:'مضلع PQRS له P(−4,1), Q(2,3). ما إحداثيات Q\' بعد الانعكاس حول المحور y؟',
+        hint:'القاعدة: (x, y) → (−x, y)',
+        opts:['Q\'(2, −3)','Q\'(−2, 3)','Q\'(3, 2)','Q\'(−2, −3)'],
+        ans:1, feedback:'صحيح! Q(2,3) → Q\'(−2,3). نعكس الإحداثي x فقط.'
+      },
+      {
+        type:'mcq',
+        q:'أيٌّ من الأزواج الآتية صحيح لقاعدة الانعكاس حول المحور y؟',
+        hint:'المحور y: نعكس الإحداثي x فقط.',
+        opts:['(x,y)→(x,−y)','(x,y)→(−x,y)','(x,y)→(y,x)','(x,y)→(−x,−y)'],
+        ans:1, feedback:'صحيح! الانعكاس حول المحور y: (x,y)→(−x,y).'
+      },
+      {
+        type:'mcq',
+        q:'JKLM: J(2,2), K(4,1), L(3,−3). ما صورة L\' بالانعكاس حول y=x؟',
+        hint:'القاعدة: (x,y)→(y,x) — بدّل الإحداثيين.',
+        opts:['L\'(3, 3)','L\'(−3, 3)','L\'(3, −3)','L\'(−3, −3)'],
+        ans:1, feedback:'صحيح! L(3,−3)→L\'(−3,3). تبدّل x و y.'
+      }
+    ]
+  },
+
+  2: {
+    color: 'var(--ch2)',
+    title: 'الإزاحة — Translation',
+    slides: [
+      {
+        num:'الشريحة 1',
+        html:`
+          <div class="objectives-box">
+            <h4>أهداف الدرس</h4>
+            <ul>
+              <li>أرسم الصور الناتجة عن الإزاحة.</li>
+              <li>أرسم الصور الناتجة عن الإزاحة في المستوى الإحداثي.</li>
+            </ul>
+          </div>
+          <div class="slide-num">مقدمة</div>
+          <h2>ما هي الإزاحة؟</h2>
+          <div class="concept-box">
+            <div class="label">مفهوم أساسي</div>
+            <h4>الإزاحة (الانسحاب) — Translation</h4>
+            <p>الإزاحة هو تحويل هندسي ينقل كل نقطة في الشكل <strong>مسافةً محددةً</strong> وفي <strong>اتجاه محدد</strong>، دون تدوير. يمكن التعبير عنها بقطعة مستقيمة طولها يساوي <span class="math-inline">AA'</span>.</p>
+            ${getGridSVG(`
+              <polygon points="-30,30 -10,30 -20,10" fill="rgba(2, 132, 199, 0.2)" stroke="#0284c7" stroke-width="1.5"/>
+              <polygon points="10,-10 30,-10 20,-30" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="1.5"/>
+              <line x1="-20" y1="10" x2="20" y2="-30" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowHead)"/>
+              <line x1="-30" y1="30" x2="10" y2="-10" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2,2"/>
+              <line x1="-10" y1="30" x2="30" y2="-10" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2,2"/>
+            `)}
+          </div>
+          <ul>
+            <li><strong>مقدار الإزاحة</strong> يساوي طول القطعة المستقيمة التي تصل أي نقطة بصورتها.</li>
+            <li>القطعة المستقيمة التي تصل أي نقطة بصورتها <strong>توازي</strong> <span class="math-inline">AA'</span>.</li>
+          </ul>
+          <div class="concept-box" style="margin-top:20px">
+            <div class="label">الإزاحة تحويل تطابقي</div>
+            <p>الإزاحة تحافظ على الأبعاد وقياسات الزوايا وترتيب مواقع النقاط والاستقامة — تمامًا كالانعكاس.</p>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 2',
+        html:`
+          <div class="slide-num">قاعدة الإزاحة في المستوى الإحداثي</div>
+          <h2>رمز الإزاحة</h2>
+          <div class="formula-grid">
+            <div class="formula-card" style="grid-column:1/-1">
+              <div class="deg" style="font-size:24px">قاعدة الإزاحة</div>
+              <div class="rule">(x, y) → (x + a, y + b)</div>
+              <div class="desc" style="margin-top:12px; font-weight:600;">
+                a = المسافة الأفقية (+ يمين، − يسار)<br>
+                b = المسافة الرأسية (+ أعلى، − أسفل)
+              </div>
+            </div>
+          </div>
+          <div class="example-box">
+            <div class="example-label">📌 مثال</div>
+            <h4>إذا كان a = 7، b = 4، وإحدى نقاط الشكل هي P(−2, 3)</h4>
+            <div class="arrow-map">
+              <span>P(−2, 3)</span>
+              <span class="arrow">→</span>
+              <span>P'(−2+7, 3+4)</span>
+              <span class="arrow">=</span>
+              <span style="color:var(--cv); font-weight:900">P'(5, 7)</span>
+            </div>
+          </div>
+          <div class="concept-box">
+            <div class="label">إشارات a و b</div>
+            <p>إشارة <strong>a السالبة</strong> تعني الإزاحة إلى <em>اليسار</em>، وإشارة <strong>b السالبة</strong> تعني الإزاحة إلى <em>أسفل</em>.</p>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 3',
+        html:`
+          <div class="slide-num">مثال 2 — الإزاحة في الإحداثي</div>
+          <h2>تطبيق قاعدة الإزاحة</h2>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 2 — ق (أ)</div>
+            <h4>△EFG: E(−7,−1)، F(−4,−4)، G(−3,−1) — وفق القاعدة (x,y)→(x+2, y+5)</h4>
+            <table class="coord-table">
+              <tr><th>الأصل</th><th>الإزاحة</th><th>الصورة</th></tr>
+              <tr><td>E(−7, −1)</td><td>+2, +5</td><td>E'(−5, 4)</td></tr>
+              <tr><td>F(−4, −4)</td><td>+2, +5</td><td>F'(−2, 1)</td></tr>
+              <tr><td>G(−3, −1)</td><td>+2, +5</td><td>G'(−1, 4)</td></tr>
+            </table>
+            <p style="margin-top:12px">تدل القاعدة على إزاحة <strong>وحدتان يمينًا</strong> و<strong>5 وحدات أعلى</strong>.</p>
+          </div>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 2 — ق (ب)</div>
+            <h4>المريع JKLM: J(3,4)، K(5,2)، L(7,4)، M(5,6) — وفق (x,y)→(x−3, y−4)</h4>
+            <table class="coord-table">
+              <tr><th>الأصل</th><th>الصورة</th></tr>
+              <tr><td>J(3, 4)</td><td>J'(0, 0)</td></tr>
+              <tr><td>K(5, 2)</td><td>K'(2, −2)</td></tr>
+              <tr><td>L(7, 4)</td><td>L'(4, 0)</td></tr>
+              <tr><td>M(5, 6)</td><td>M'(2, 2)</td></tr>
+            </table>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 4',
+        html:`
+          <div class="slide-num">مثال 3 — من واقع الحياة</div>
+          <h2>وصف الإزاحة من واقع الحياة</h2>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 3 — الفرقة العسكرية</div>
+            <h4>في استعراض عسكري، يسير الأفراد من موقع 1 إلى موقع 2 ثم موقع 3، وكل موقع يمثل خطوة واحدة.</h4>
+            <div class="steps-list">
+              <div class="step">
+                <div class="step-num">أ</div>
+                <div class="step-text">من الموقع 1 إلى الموقع 2: إحدى النقاط تحركت من (14,8) إلى (2,8).<br>نستعمل القاعدة: <span class="math-inline">(14+a, 8+b) = (2,8)</span><br>إذن: a = −12، b = 0.<br>القاعدة: <span class="math-inline">(x,y)→(x−12, y)</span> (12 خطوة يسارًا).</div>
+              </div>
+              <div class="step">
+                <div class="step-num">ب</div>
+                <div class="step-text">من الموقع 1 إلى الموقع 3: نقطة (14,8) انتقلت إلى (2,−1).<br>a = −12، b = −9.<br>القاعدة: <span class="math-inline">(x,y)→(x−12, y−9)</span> (12 يسارًا و 9 أسفل).</div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 5',
+        html:`
+          <div class="slide-num">إيجاد قاعدة الإزاحة</div>
+          <h2>كيف تجد قاعدة الإزاحة؟</h2>
+          <div class="concept-box">
+            <div class="label">الخطوات</div>
+            <p>إذا أُعطيت نقطة أصلية <span class="math-inline">(x₁, y₁)</span> وصورتها <span class="math-inline">(x₂, y₂)</span>، فإن:</p>
+          </div>
+          <div class="formula-grid">
+            <div class="formula-card">
+              <div class="deg" style="font-size:24px">a = x₂ − x₁</div>
+              <div class="desc" style="font-weight:700">المسافة الأفقية</div>
+            </div>
+            <div class="formula-card">
+              <div class="deg" style="font-size:24px">b = y₂ − y₁</div>
+              <div class="desc" style="font-weight:700">المسافة الرأسية</div>
+            </div>
+          </div>
+          <div class="example-box">
+            <div class="example-label">📌 مثال</div>
+            <h4>النقطة A(5,4) انتقلت إلى A'(1,6). أوجد قاعدة الإزاحة.</h4>
+            <div class="arrow-map">
+              <span>a = 1 − 5 = −4</span>
+              <span class="arrow">|</span>
+              <span>b = 6 − 4 = 2</span>
+            </div>
+            <p style="margin-top:12px; font-weight:700">القاعدة: <span class="math-inline">(x,y)→(x−4, y+2)</span></p>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 6',
+        html:`
+          <div class="slide-num">مراجعة الدرس</div>
+          <h2>ملخص درس الإزاحة 🎯</h2>
+          <div class="formula-grid">
+            <div class="formula-card" style="grid-column:1/-1">
+              <div class="deg" style="font-size:24px">القاعدة العامة</div>
+              <div class="rule">(x, y) → (x + a, y + b)</div>
+            </div>
+          </div>
+          <table class="summary-table">
+            <tr><th>الاتجاه</th><th>إشارة a أو b</th></tr>
+            <tr><td>يمينًا</td><td><span class="math-inline">a > 0</span></td></tr>
+            <tr><td>يسارًا</td><td><span class="math-inline">a < 0</span></td></tr>
+            <tr><td>أعلى</td><td><span class="math-inline">b > 0</span></td></tr>
+            <tr><td>أسفل</td><td><span class="math-inline">b < 0</span></td></tr>
+          </table>
+          <div class="concept-box">
+            <div class="label">لإيجاد قاعدة الإزاحة من نقطة وصورتها</div>
+            <p><span class="math-inline">a = x' − x</span> و <span class="math-inline">b = y' − y</span></p>
+          </div>
+          <p style="margin-top:24px; font-size:16px; font-weight:800">أحسنت! انتقل إلى <strong style="color:var(--cv)">الاختبار</strong> لتطبيق ما تعلمته 💪</p>
+        `
+      }
+    ],
+    questions: [
+      {
+        type:'mcq',
+        q:'صورة النقطة P(−2, 3) بالإزاحة وفق القاعدة (x,y)→(x+7, y+4) هي:',
+        hint:'أضف 7 إلى x وأضف 4 إلى y.',
+        opts:['P\'(5, 7)','P\'(−9, −1)','P\'(5, −1)','P\'(−2, 7)'],
+        ans:0, feedback:'ممتاز! (−2+7, 3+4) = (5,7).'
+      },
+      {
+        type:'mcq',
+        q:'الإزاحة (x,y)→(x−3, y−4) تنقل النقطة K(5,2) إلى أي نقطة؟',
+        hint:'اطرح 3 من x واطرح 4 من y.',
+        opts:['K\'(8, 6)','K\'(2, −2)','K\'(5, −2)','K\'(2, 2)'],
+        ans:1, feedback:'صحيح! (5−3, 2−4) = (2,−2).',
+        svg: getGridSVG(`
+            <circle cx="20" cy="-10" r="2" fill="#0284c7"/>
+            <text x="23" y="-13" font-size="5" fill="#0284c7">K(5,2)</text>
+            <circle cx="10" cy="10" r="2" fill="#10b981"/>
+            <text x="13" y="13" font-size="5" fill="#10b981">K'(2,-2)</text>
+            <line x1="20" y1="-10" x2="10" y2="10" stroke="#f59e0b" stroke-width="1" marker-end="url(#arrowHead)"/>
+        `)
+      },
+      {
+        type:'mcq',
+        q:'النقطة A(1,6) هي صورة النقطة A(4,7) بإزاحة معينة. ما قاعدة هذه الإزاحة؟',
+        hint:'a = x\' − x و b = y\' − y',
+        opts:['(x,y)→(x+3, y+1)','(x,y)→(x−3, y−1)','(x,y)→(x−3, y+1)','(x,y)→(x+1, y−3)'],
+        ans:1, feedback:'صحيح! a = 1−4 = −3 و b = 6−7 = −1، فالقاعدة: (x,y)→(x−3, y−1).'
+      },
+      {
+        type:'mcq',
+        q:'الإزاحة (x,y)→(x+4, y−1) تنقل النقطة J(3,4) إلى:',
+        hint:'أضف 4 إلى x واطرح 1 من y.',
+        opts:['J\'(7, 3)','J\'(7, 5)','J\'(−1, 5)','J\'(3, 3)'],
+        ans:0, feedback:'صحيح! (3+4, 4−1) = (7,3).'
+      },
+      {
+        type:'mcq',
+        q:'إزاحة تنقل نقطة 5 وحدات يمينًا و3 وحدات أسفل. ما قاعدتها؟',
+        hint:'يمينًا → a موجبة، أسفل → b سالبة.',
+        opts:['(x,y)→(x−5, y+3)','(x,y)→(x+5, y+3)','(x,y)→(x+5, y−3)','(x,y)→(x−5, y−3)'],
+        ans:2, feedback:'صحيح! يمينًا 5 → +5، أسفل 3 → −3. القاعدة: (x,y)→(x+5, y−3).'
+      },
+      {
+        type:'mcq',
+        q:'△EFG: E(−7,−1), F(−4,−4), G(−3,−1). وفق القاعدة (x,y)→(x+2, y+5)، ما إحداثيات F\'؟',
+        hint:'طبّق القاعدة على F(−4, −4): أضف 2 إلى x وأضف 5 إلى y.',
+        opts:['F\'(−6, −9)','F\'(−2, 1)','F\'(−4, 1)','F\'(−2, −4)'],
+        ans:1, feedback:'ممتاز! F(−4,−4)→F\'(−4+2, −4+5)=(−2,1).'
+      },
+      {
+        type:'mcq',
+        q:'أيُّ الأزواج الآتية يمثل إزاحة 6 وحدات يسارًا و2 وحدتين أعلى؟',
+        hint:'يسارًا → a سالبة، أعلى → b موجبة.',
+        opts:['(x,y)→(x+6, y−2)','(x,y)→(x−6, y+2)','(x,y)→(x+6, y+2)','(x,y)→(x−6, y−2)'],
+        ans:1, feedback:'صحيح! يسارًا 6 → a=−6، أعلى 2 → b=+2.'
+      }
+    ]
+  },
+
+  3: {
+    color: 'var(--ch3)',
+    title: 'الدوران — Rotation',
+    slides: [
+      {
+        num:'الشريحة 1',
+        html:`
+          <div class="objectives-box">
+            <h4>أهداف الدرس</h4>
+            <ul>
+              <li>أرسم الصورة الناتجة عن دوران شكل مستعملا المنقلة.</li>
+              <li>أرسم الصورة الناتجة عن دوران شكل في المستوى الإحداثي.</li>
+            </ul>
+          </div>
+          <div class="slide-num">مقدمة</div>
+          <h2>ما هو الدوران؟</h2>
+          <div class="concept-box">
+            <div class="label">مفهوم أساسي</div>
+            <h4>الدوران — Rotation</h4>
+            <p>الدوران حول نقطة ثابتة تُسمى <strong>مركز الدوران</strong> بزاوية قياسها x°، يُحوّل النقطة إلى صورتها بحيث:</p>
+            ${getGridSVG(`
+              <circle cx="0" cy="0" r="1.5" fill="#94a3b8"/> <circle cx="30" cy="-10" r="2" fill="#0284c7"/>
+              <text x="33" y="-13" font-size="5" fill="#0284c7">A</text>
+              <line x1="0" y1="0" x2="30" y2="-10" stroke="#0284c7" stroke-dasharray="2,2"/>
+              <circle cx="-10" cy="-30" r="2" fill="#10b981"/>
+              <text x="-15" y="-33" font-size="5" fill="#10b981">A'</text>
+              <line x1="0" y1="0" x2="-10" y2="-30" stroke="#10b981" stroke-dasharray="2,2"/>
+              <path d="M 15 -5 A 15 15 0 0 0 -5 -15" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowHead)"/>
+            `)}
+          </div>
+          <ul>
+            <li><mark class="racy-highlight">إذا كانت النقطة هي مركز الدوران، فإن صورتها هي النقطة نفسها.</mark></li>
+            <li><mark class="racy-highlight">إذا كانت النقطة غير مركز الدوران، فصورتها تبغدان نفس المسافة عن مركز الدوران، والزاوية المتشكلة بين النقطة ومركز الدوران والصورة = زاوية الدوران.</mark></li>
+          </ul>
+          <div class="formula-grid" style="margin-top:24px">
+            <div class="formula-card">
+              <div class="deg">اتجاه الدوران</div>
+              <div class="desc" style="font-size:15px; font-weight:700">افتراضيًا: عكس اتجاه حركة عقارب الساعة ↺<br><br>إذا ذُكر عكس ذلك: اتجاه عقارب الساعة ↻</div>
+            </div>
+            <div class="formula-card">
+              <div class="deg">دوران 360°</div>
+              <div class="desc" style="font-size:15px; font-weight:700">الصورة الناتجة = الشكل الأصلي نفسه تمامًا.</div>
+            </div>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 2',
+        html:`
+          <div class="slide-num">قواعد الدوران حول نقطة الأصل</div>
+          <h2>رموز الدوران في المستوى الإحداثي</h2>
+          <p style="margin-bottom:24px; font-weight:700">عند الدوران حول نقطة الأصل عكس اتجاه حركة عقارب الساعة:</p>
+          <div class="formula-grid">
+            <div class="formula-card">
+              <div class="deg">90°</div>
+              <div class="rule">(x, y) → (−y, x)</div>
+              <div class="desc">اضرب y في −1، ثم بدّل موقعَي الإحداثيين</div>
+            </div>
+            <div class="formula-card">
+              <div class="deg">180°</div>
+              <div class="rule">(x, y) → (−x, −y)</div>
+              <div class="desc">اضرب كلًّا من x و y في −1</div>
+            </div>
+            <div class="formula-card">
+              <div class="deg">270°</div>
+              <div class="rule">(x, y) → (y, −x)</div>
+              <div class="desc">اضرب x في −1، ثم بدّل موقعَي الإحداثيين</div>
+            </div>
+          </div>
+          <div class="concept-box">
+            <div class="label">طريقة تذكر 270°</div>
+            <p>الدوران 270° عكس اتجاه عقارب الساعة = الدوران 90° <strong>في اتجاه</strong> عقارب الساعة — وكلاهما يعطي نفس النتيجة!</p>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 3',
+        html:`
+          <div class="slide-num">مثال 2 — الدوران 90°</div>
+          <h2>تطبيق قاعدة الدوران 90°</h2>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 2</div>
+            <h4>△PQR: P(1,1)، Q(4,5)، R(5,1) — دوران 90° حول نقطة الأصل</h4>
+            <p>القاعدة: <span class="math-inline">(x,y) → (−y, x)</span></p>
+            <table class="coord-table">
+              <tr><th>الأصل</th><th>→</th><th>الصورة</th></tr>
+              <tr><td>P(1, 1)</td><td>→</td><td>P'(−1, 1)</td></tr>
+              <tr><td>Q(4, 5)</td><td>→</td><td>Q'(−5, 4)</td></tr>
+              <tr><td>R(5, 1)</td><td>→</td><td>R'(−1, 5)</td></tr>
+            </table>
+          </div>
+          <div class="concept-box">
+            <div class="label">تحقق</div>
+            <p>ارسم △PQR وصورته △P'Q'R' في المستوى الإحداثي للتحقق من أن الدوران 90° صحيح.</p>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 4',
+        html:`
+          <div class="slide-num">مثال — الدوران 180° و270°</div>
+          <h2>تطبيق قواعد الدوران 180° و270°</h2>
+          <div class="example-box">
+            <div class="example-label">📌 دوران 180°</div>
+            <h4>FGHJ: F(2,1)، G(7,1)، H(6,−3)، J(1,−3)</h4>
+            <p>القاعدة: <span class="math-inline">(x,y) → (−x, −y)</span></p>
+            <table class="coord-table">
+              <tr><th>الأصل</th><th>الصورة</th></tr>
+              <tr><td>F(2, 1)</td><td>F'(−2, −1)</td></tr>
+              <tr><td>G(7, 1)</td><td>G'(−7, −1)</td></tr>
+              <tr><td>H(6, −3)</td><td>H'(−6, 3)</td></tr>
+              <tr><td>J(1, −3)</td><td>J'(−1, 3)</td></tr>
+            </table>
+          </div>
+          <div class="example-box">
+            <div class="example-label">📌 دوران 270°</div>
+            <h4>نقطة P(5,2) — دوران 270°</h4>
+            <p>القاعدة: <span class="math-inline">(x,y) → (y, −x)</span></p>
+            <div class="arrow-map">
+              <span>P(5, 2)</span>
+              <span class="arrow">→</span>
+              <span>P'(2, −5)</span>
+            </div>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 5',
+        html:`
+          <div class="slide-num">مثال 3 — من اختبار</div>
+          <h2>تحديد إحداثيات النقطة بعد الدوران</h2>
+          <div class="example-box">
+            <div class="example-label">📌 مثال 3 — من اختبار</div>
+            <h4>ما صورة النقطة J من دوران △JKL بزاوية 270° حول نقطة الأصل؟</h4>
+            <p>إحداثيات: J(3,−7)، K(1,−1)، L(5,−3)</p>
+            <div class="steps-list">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-text">نطبق القاعدة: <span class="math-inline">(x,y) → (y, −x)</span></div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-text">J(3, −7) → J'(−7, −3)</div>
+              </div>
+            </div>
+            <div class="concept-box" style="margin-top:12px; background:#fefce8; border-color:#fef08a;">
+              <p>الإجابة الصحيحة: <strong style="color:var(--ch3)">J'(−7, −3)</strong> — الخيار C</p>
+            </div>
+          </div>
+          <div class="concept-box">
+            <div class="label">إرشاد للاختبار</div>
+            <p>يمكنك التحقق من صورة نقطة واحدة فقط ثم مقارنتها بالخيارات، بدلًا من التحقق من جميع الرؤوس.</p>
+          </div>
+        `
+      },
+      {
+        num:'الشريحة 6',
+        html:`
+          <div class="slide-num">مراجعة الدرس</div>
+          <h2>ملخص درس الدوران 🎯</h2>
+          <div class="formula-grid">
+            <div class="formula-card">
+              <div class="deg">90°</div>
+              <div class="rule">(x,y)→(−y,x)</div>
+            </div>
+            <div class="formula-card">
+              <div class="deg">180°</div>
+              <div class="rule">(x,y)→(−x,−y)</div>
+            </div>
+            <div class="formula-card">
+              <div class="deg">270°</div>
+              <div class="rule">(x,y)→(y,−x)</div>
+            </div>
+          </div>
+          <div class="concept-box">
+            <div class="label">مقارنة بين التحويلات الثلاثة</div>
+            <table class="summary-table">
+              <tr><th>التحويل</th><th>القاعدة العامة</th><th>نوعه</th></tr>
+              <tr><td>الانعكاس</td><td>يعكس إحداثيًا واحدًا أو يبدّلهما</td><td><span class="tag-pill blue">Reflection</span></td></tr>
+              <tr><td>الإزاحة</td><td>(x,y)→(x+a, y+b)</td><td><span class="tag-pill green">Translation</span></td></tr>
+              <tr><td>الدوران</td><td>3 قواعد بحسب الزاوية</td><td><span class="tag-pill yellow">Rotation</span></td></tr>
+            </table>
+          </div>
+          <p style="margin-top:24px; font-size:16px; font-weight:800;">أحسنت! 🎉 انتقل إلى <strong style="color:var(--cv)">الاختبار</strong> لتثبيت المعلومات.</p>
+        `
+      }
+    ],
+    questions: [
+      {
+        type:'mcq',
+        q:'صورة النقطة P(5, 2) بعد دوران 90° عكس اتجاه عقارب الساعة حول نقطة الأصل هي:',
+        hint:'القاعدة: (x,y) → (−y, x)',
+        opts:['P\'(2, 5)','P\'(−2, 5)','P\'(5, −2)','P\'(−5, −2)'],
+        ans:1, feedback:'صحيح! (5,2)→(−2,5). اضرب y في −1 ثم بدّل الإحداثيين.'
+      },
+      {
+        type:'mcq',
+        q:'صورة النقطة Q(−3, 4) بعد دوران 180° حول نقطة الأصل هي:',
+        hint:'القاعدة: (x,y) → (−x, −y)',
+        opts:['Q\'(3, 4)','Q\'(−3, −4)','Q\'(3, −4)','Q\'(4, 3)'],
+        ans:2, feedback:'ممتاز! (−3,4)→(3,−4). نضرب كلًّا من x و y في −1.'
+      },
+      {
+        type:'mcq',
+        q:'صورة النقطة J(3, −7) بعد دوران 270° حول نقطة الأصل هي:',
+        hint:'القاعدة: (x,y) → (y, −x)',
+        opts:['J\'(−3, 7)','J\'(7, 3)','J\'(−7, −3)','J\'(7, −3)'],
+        ans:2, feedback:'صحيح! (3,−7)→(−7,−3). القاعدة: (x,y)→(y,−x).',
+        svg: getGridSVG(`
+            <circle cx="15" cy="35" r="2" fill="#0284c7"/>
+            <text x="18" y="35" font-size="5" fill="#0284c7">J(3,-7)</text>
+            <circle cx="-35" cy="15" r="2" fill="#10b981"/>
+            <text x="-48" y="15" font-size="5" fill="#10b981">J'(-7,-3)</text>
+            <line x1="0" y1="0" x2="15" y2="35" stroke="#0284c7" stroke-dasharray="2,2"/>
+            <line x1="0" y1="0" x2="-35" y2="15" stroke="#10b981" stroke-dasharray="2,2"/>
+        `)
+      },
+      {
+        type:'mcq',
+        q:'△PQR: P(1,1), Q(4,5), R(5,1). بعد دوران 90°، ما إحداثيات Q\'؟',
+        hint:'القاعدة: (x,y)→(−y,x). طبّقها على Q(4,5).',
+        opts:['Q\'(5, 4)','Q\'(−5, 4)','Q\'(4, −5)','Q\'(−4, −5)'],
+        ans:1, feedback:'صحيح! Q(4,5)→Q\'(−5,4).'
+      },
+      {
+        type:'mcq',
+        q:'الدوران 270° عكس عقارب الساعة يعادل:',
+        hint:'فكّر في مقدار الدوران المتبقي لإكمال الدائرة الكاملة (360°).',
+        opts:['90° في اتجاه عقارب الساعة','180° في اتجاه عقارب الساعة','270° في اتجاه عقارب الساعة','360° عكس عقارب الساعة'],
+        ans:0, feedback:'صحيح! 360° − 270° = 90°، فالدوران 270° عكس الساعة = 90° في اتجاه الساعة.'
+      },
+      {
+        type:'mcq',
+        q:'ما صورة النقطة R(−2, 6) بعد دوران 180°؟',
+        hint:'القاعدة: (x,y)→(−x,−y)',
+        opts:['R\'(2, 6)','R\'(6, 2)','R\'(2, −6)','R\'(−6, −2)'],
+        ans:2, feedback:'صحيح! (−2,6)→(2,−6).'
+      },
+      {
+        type:'mcq',
+        q:'FGHJ: F(2,4), G(5,6). بعد دوران 270°، ما إحداثيات G\'؟',
+        hint:'القاعدة: (x,y)→(y,−x). طبّقها على G(5,6).',
+        opts:['G\'(6, −5)','G\'(−6, 5)','G\'(−5, 6)','G\'(5, 6)'],
+        ans:0, feedback:'صحيح! G(5,6)→G\'(6,−5).'
+      },
+      {
+        type:'mcq',
+        q:'أيُّ الرموز الآتية صحيح لدوران 90° عكس اتجاه عقارب الساعة؟',
+        hint:'تذكر: نضرب y في −1 ثم نبدّل الإحداثيين.',
+        opts:['(x,y)→(−x,−y)','(x,y)→(y,−x)','(x,y)→(−y,x)','(x,y)→(x,−y)'],
+        ans:2, feedback:'صحيح! الدوران 90° عكس الساعة: (x,y)→(−y,x).'
+      }
+    ]
+  }
+};
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let currentChapter = null;
+let currentTab = 'slides';
+let quizAnswers = {};
+let quizScore = 0;
+let quizAnswered = 0;
+
+// ══════════════════════════════════════════════
+// OPEN / CLOSE
+// ══════════════════════════════════════════════
+function openChapter(n) {
+  currentChapter = n;
+  const ch = CHAPTERS[n];
+  document.getElementById('viewer').classList.add('active');
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('viewer-title').textContent = ch.title;
+
+  // Set color var
+  document.getElementById('viewer').style.setProperty('--cv', ch.color);
+
+  // Build slides
+  buildSlides(n);
+  buildQuiz(n);
+
+  switchTab('slides');
+}
+
+function closeChapter() {
+  document.getElementById('viewer').classList.remove('active');
+  document.getElementById('landing').style.display = 'flex';
+  document.getElementById('slides-scroll').scrollTop = 0;
+  document.getElementById('progress-bar').style.width = '0%';
+  quizAnswers = {}; quizScore = 0; quizAnswered = 0;
+}
+
+// ══════════════════════════════════════════════
+// SLIDES
+// ══════════════════════════════════════════════
+function buildSlides(n) {
+  const ch = CHAPTERS[n];
+  const cont = document.getElementById('slides-content');
+  cont.innerHTML = ch.slides.map((s, i) => `
+    <div class="slide" id="slide-${i}" data-index="${i}">
+      <div class="slide-inner">${s.html}</div>
+    </div>
+  `).join('');
+}
+
+function updateProgress() {
+  const el = document.getElementById('slides-scroll');
+  const pct = el.scrollTop / (el.scrollHeight - el.clientHeight) * 100;
+  document.getElementById('progress-bar').style.width = Math.min(100, pct) + '%';
+}
+
+// ══════════════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════════════
+function buildQuiz(n) {
+  const ch = CHAPTERS[n];
+  const cont = document.getElementById('quiz-content');
+  quizAnswers = {}; quizScore = 0; quizAnswered = 0;
+  document.getElementById('score-badge').textContent = '0 / ' + ch.questions.length;
+  document.getElementById('quiz-complete').classList.remove('show');
+
+  cont.innerHTML = ch.questions.map((q, qi) => {
+    const letters = ['A','B','C','D'];
+    const optsHTML = q.opts.map((opt, oi) => `
+      <div class="opt" id="opt-${qi}-${oi}" onclick="selectOpt(${qi}, ${oi})">
+        <div class="opt-marker">${letters[oi]}</div>
+        <span>${opt}</span>
+      </div>
+    `).join('');
+    
+    const svgHTML = q.svg ? q.svg : '';
+    
+    return `
+      <div class="q-card" id="qcard-${qi}">
+        <div class="q-num">سؤال ${qi+1} من ${ch.questions.length}</div>
+        <div class="q-text">${q.q}</div>
+        ${svgHTML}
+        ${q.hint ? `<div class="q-hint">💡 تلميح: ${q.hint}</div>` : ''}
+        <div class="options">${optsHTML}</div>
+        <div class="feedback-box" id="fb-${qi}"></div>
+      </div>
+    `;
+  }).join('');
+}
+
+function selectOpt(qi, oi) {
+  if (quizAnswers[qi] !== undefined) return; // already answered
+  const ch = CHAPTERS[currentChapter];
+  const q = ch.questions[qi];
+  const correct = q.ans === oi;
+
+  quizAnswers[qi] = oi;
+  quizAnswered++;
+
+  // Disable all opts
+  const numOpts = q.opts.length;
+  for (let i = 0; i < numOpts; i++) {
+    const el = document.getElementById(`opt-${qi}-${i}`);
+    el.classList.add('disabled');
+    if (i === q.ans) el.classList.add('show-correct');
+  }
+  const chosen = document.getElementById(`opt-${qi}-${oi}`);
+  chosen.classList.remove('show-correct');
+  chosen.classList.add(correct ? 'selected-correct' : 'selected-wrong');
+
+  // Feedback
+  const fb = document.getElementById(`fb-${qi}`);
+  fb.style.display = 'block';
+  if (correct) {
+    quizScore++;
+    fb.className = 'feedback-box correct';
+    fb.innerHTML = '✅ إجابة صحيحة! ' + (q.feedback || '');
+  } else {
+    fb.className = 'feedback-box wrong';
+    fb.innerHTML = '❌ إجابة خاطئة. ' + (q.feedback || 'الإجابة الصحيحة موضحة باللون الأخضر.');
+  }
+
+  // Card border
+  document.getElementById(`qcard-${qi}`).classList.add(correct ? 'answered-correct' : 'answered-wrong');
+
+  // Update score
+  document.getElementById('score-badge').textContent = quizScore + ' / ' + ch.questions.length;
+
+  // Check completion
+  if (quizAnswered === ch.questions.length) {
+    setTimeout(showComplete, 600);
+  }
+}
+
+function showComplete() {
+  const ch = CHAPTERS[currentChapter];
+  const total = ch.questions.length;
+  const pct = Math.round(quizScore / total * 100);
+  const el = document.getElementById('quiz-complete');
+  el.style.setProperty('--cv', ch.color);
+
+  let emoji = '⭐'; let msg = 'حاول مرة أخرى لتحسين درجتك!';
+  if (pct >= 90) { emoji = '🌟'; msg = 'ممتاز جدًا! أداء رائع وفهم عميق للمادة 🎉'; }
+  else if (pct >= 70) { emoji = '👍'; msg = 'جيد! مراجعة بسيطة للمفاهيم ستساعدك أكثر.'; }
+  else if (pct >= 50) { emoji = '📚'; msg = 'راجع الشرائح مجددًا ثم أعد الاختبار.'; }
+
+  document.getElementById('complete-emoji').textContent = emoji;
+  document.getElementById('complete-score').textContent = quizScore + ' / ' + total;
+  document.getElementById('complete-msg').textContent = msg;
+  el.classList.add('show');
+  el.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function retryQuiz() {
+  buildQuiz(currentChapter);
+}
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('slides-wrap').style.display = tab === 'slides' ? 'flex' : 'none';
+  document.getElementById('quiz-wrap').style.display = tab === 'quiz' ? 'block' : 'none';
+  document.getElementById('quiz-wrap').classList.toggle('active', tab === 'quiz');
+  document.getElementById('tab-slides').classList.toggle('active', tab === 'slides');
+  document.getElementById('tab-quiz').classList.toggle('active', tab === 'quiz');
+  if (tab === 'quiz') document.getElementById('quiz-wrap').scrollTop = 0;
+}
+</script>
+</body>
+</html>
